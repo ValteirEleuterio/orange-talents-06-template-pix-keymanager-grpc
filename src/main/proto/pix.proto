@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "br.com.zupacademy.valteir";
+
+package br.com.zupacademy.valteir;
+
+
+service PixService {
+  rpc cadastrar(PixRequest) returns (PixResponse);
+}
+
+message ErrorDetails {
+  int32 code = 1;
+  repeated string message = 2;
+}
+
+enum TipoChave {
+  UNKNOWN_TIPO_CHAVE = 0;
+  CPF = 1;
+  CELULAR = 2;
+  EMAIL = 3;
+  ALEATORIA = 4;
+}
+
+enum TipoConta {
+  UNKNOWN_TIPO_CONTA = 0;
+  CONTA_CORRENTE = 1;
+  CONTA_POUPANCA = 2;
+}
+
+message PixRequest {
+  string idTitular = 1;
+  TipoChave tipo = 2;
+  string valorChave = 3;
+  TipoConta conta = 4;
+}
+
+message PixResponse {
+  string pixId = 1;
+}

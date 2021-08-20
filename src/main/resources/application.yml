@@ -1,0 +1,16 @@
+micronaut:
+  application:
+    name: keymanagerGrpc
+
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/keymanager
+    driverClassName: org.postgresql.Driver
+    username: keymanager
+    password: keymanager
+    dialect: POSTGRES
+jpa.default.properties.hibernate.hbm2ddl.auto: update
+
+itau-api: http://localhost:9091
+bcb-api: http://localhost:8082
+
