@@ -2,7 +2,7 @@ package br.com.zupacademy.valteir.outros_sistemas
 
 import br.com.zupacademy.valteir.TipoConta
 
-class ContaResponse(
+data class ContaResponse(
     val tipo: TipoConta,
     val instituicao: Instituicao,
     val agencia: String,

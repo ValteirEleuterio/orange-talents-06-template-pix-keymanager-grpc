@@ -11,7 +11,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class PixGrpcServer(
+open class NovaChavePixEndpoint(
     @Inject private val service: NovaChavePixService,
 ) : PixServiceGrpc.PixServiceImplBase() {
 

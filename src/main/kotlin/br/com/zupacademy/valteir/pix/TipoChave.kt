@@ -7,7 +7,7 @@ enum class TipoChave {
                 return false
             }
 
-            return chave.matches("[0-9]+".toRegex())
+            return chave.matches("[0-9]{11}+".toRegex())
         }
     },
     CELULAR {

@@ -13,15 +13,11 @@ import kotlin.reflect.KClass
 @Retention(RUNTIME)
 @Constraint(validatedBy = [ValidPixKeyValidator::class])
 annotation class ValidPixKey(
-    val message: String = "chave Pix inválida (\${validatedValue.tipo})",
+    val message: String = "chave Pix inválida",
     val groups: Array<KClass<Any>> = [],
     val payload: Array<KClass<Payload>> = [],
 )
 
-/**
- * Using Bean Validation API because we wanted to use Custom property paths
- * https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#section-custom-property-paths
- */
 @Singleton
 class ValidPixKeyValidator: javax.validation.ConstraintValidator<ValidPixKey, NovaChavePix> {
 
@@ -37,7 +33,7 @@ class ValidPixKeyValidator: javax.validation.ConstraintValidator<ValidPixKey, No
             // https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#section-custom-property-paths
             context.disableDefaultConstraintViolation()
             context
-                .buildConstraintViolationWithTemplate(context.defaultConstraintMessageTemplate) // or "chave Pix inválida (${value.tipo})"
+                .buildConstraintViolationWithTemplate(context.defaultConstraintMessageTemplate + " (${value.tipoChave})") // or "chave Pix inválida (${value.tipo})"
                 .addPropertyNode("chave").addConstraintViolation()
         }
 
