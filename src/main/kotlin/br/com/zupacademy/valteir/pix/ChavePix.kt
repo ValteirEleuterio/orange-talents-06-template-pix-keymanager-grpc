@@ -29,6 +29,8 @@ class ChavePix(
     val conta: TipoConta
 ) {
 
+    fun pertenceAo(idTitular : UUID): Boolean = idTitular == this.idTitular
+
     @Id
     @GeneratedValue
     val id: UUID? = null

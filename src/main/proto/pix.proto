@@ -10,6 +10,10 @@ service PixService {
   rpc cadastrar(PixRequest) returns (PixResponse);
 }
 
+service RemovePixService {
+  rpc remove(RemoveChavePixRequest) returns (RemoveChavePixResponse);
+}
+
 message ErrorDetails {
   int32 code = 1;
   repeated string message = 2;
@@ -38,4 +42,14 @@ message PixRequest {
 
 message PixResponse {
   string pixId = 1;
+}
+
+message RemoveChavePixRequest {
+  string pixId = 1;
+  string idTitular = 2;
+}
+
+message RemoveChavePixResponse {
+  string pixId = 1;
+  string idTitular = 2;
 }

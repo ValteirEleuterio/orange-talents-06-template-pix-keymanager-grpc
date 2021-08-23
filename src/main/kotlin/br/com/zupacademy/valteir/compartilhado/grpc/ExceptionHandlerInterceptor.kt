@@ -17,8 +17,8 @@ class ExceptionHandlerInterceptor(@Inject private val resolver: ExceptionHandler
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun intercept(context: MethodInvocationContext<BindableService, Any?>): Any? {
-        try {
-            return context.proceed()
+        return try {
+            context.proceed()
         } catch (e: Exception) {
 
             logger.error("Handling the exception '${e.javaClass.name}' while processing the call: ${context.targetMethod}", e)
