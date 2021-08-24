@@ -27,4 +27,5 @@ class RemoveChavePixService(
 
         repository.delete(chavePix)
     }
+
 }
