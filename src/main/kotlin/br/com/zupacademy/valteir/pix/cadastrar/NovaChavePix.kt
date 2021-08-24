@@ -2,6 +2,7 @@ package br.com.zupacademy.valteir.pix.cadastrar
 
 import br.com.zupacademy.valteir.TipoConta
 import br.com.zupacademy.valteir.compartilhado.validation.ValidUUID
+import br.com.zupacademy.valteir.outros_sistemas.ContaResponse
 import br.com.zupacademy.valteir.pix.ChavePix
 import br.com.zupacademy.valteir.pix.TipoChave
 import io.micronaut.core.annotation.Introspected
@@ -25,12 +26,13 @@ data class NovaChavePix(
     val tipoConta: TipoConta?
 ) {
 
-    fun toModel() : ChavePix =
+    fun toModel(dadosConta: ContaResponse) : ChavePix =
         ChavePix(
             idTitular = UUID.fromString(idTitular),
             tipo = tipoChave!!,
             valor = if(tipoChave == TipoChave.ALEATORIA) UUID.randomUUID().toString() else valor!!,
-            conta = tipoConta!!
+            conta = tipoConta!!,
+            instituicao = dadosConta.instituicao.ispb
         )
 
 }

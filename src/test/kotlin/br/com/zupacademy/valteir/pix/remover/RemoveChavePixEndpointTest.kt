@@ -41,7 +41,8 @@ internal class RemoveChavePixEndpointTest(
             UUID.randomUUID(),
             TipoChave.EMAIL,
             "teste@email.com",
-            TipoConta.CONTA_CORRENTE
+            TipoConta.CONTA_CORRENTE,
+            "60701190"
         ))
     }
 

@@ -78,7 +78,8 @@ internal class NovaChavePixEndpointTest(
             UUID.fromString("c56dfef4-7901-44fb-84e2-a2cefb157890"),
             br.com.zupacademy.valteir.pix.TipoChave.EMAIL,
             "valteir@hotmail.com",
-            TipoConta.CONTA_CORRENTE
+            TipoConta.CONTA_CORRENTE,
+            "60701190"
         )
         repository.save(chavePixExistente)
 

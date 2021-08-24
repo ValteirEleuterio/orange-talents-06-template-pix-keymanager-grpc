@@ -21,17 +21,32 @@ class ChavePix(
     @NotBlank
     @Size(max = 77)
     @field:Column(nullable = false, unique = true)
-    val valor: String,
+    var valor: String,
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @field:Column(nullable = false)
-    val conta: TipoConta
+    val conta: TipoConta,
+
+    @field:NotBlank
+    @Column(nullable = false)
+    val instituicao: String
 ) {
 
     fun pertenceAo(idTitular : UUID): Boolean = idTitular == this.idTitular
 
+    fun atualiza(novaChave: String) : Boolean {
+        if(ehAleatoria()) {
+            valor = novaChave
+            return true
+        }
+        return false
+    }
+
+    fun ehAleatoria() = tipo == TipoChave.ALEATORIA
+
     @Id
     @GeneratedValue
     val id: UUID? = null
+
 }
