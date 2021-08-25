@@ -4,8 +4,7 @@ import br.com.zupacademy.valteir.PixRequest
 import br.com.zupacademy.valteir.PixServiceGrpc
 import br.com.zupacademy.valteir.TipoChave
 import br.com.zupacademy.valteir.TipoConta
-import br.com.zupacademy.valteir.outros_sistemas.ContaResponse
-import br.com.zupacademy.valteir.outros_sistemas.ItauClient
+import br.com.zupacademy.valteir.outros_sistemas.*
 import br.com.zupacademy.valteir.pix.ChavePix
 import br.com.zupacademy.valteir.pix.ChavePixRepository
 import com.google.rpc.BadRequest
@@ -18,6 +17,9 @@ import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
 import io.micronaut.grpc.server.GrpcServerChannel
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpResponseFactory
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.hamcrest.MatcherAssert.assertThat
@@ -42,6 +44,9 @@ internal class NovaChavePixEndpointTest(
     @Inject
     lateinit var itauClient: ItauClient
 
+    @Inject
+    lateinit var bcbClient: BancoCentralClient
+
     @BeforeEach
     fun setup() {
         repository.deleteAll()
@@ -53,12 +58,15 @@ internal class NovaChavePixEndpointTest(
         val request = PixRequest.newBuilder()
             .setIdTitular(idTitular)
             .setTipo(TipoChave.EMAIL)
-            .setValorChave("valteir@hotmail.com")
+            .setValorChave("teste@email.com")
             .setConta(TipoConta.CONTA_CORRENTE)
             .build()
 
         `when`(itauClient.consultaContaCliente(idTitular, TipoConta.CONTA_CORRENTE.toString()))
-            .thenReturn(HttpResponse.ok())
+            .thenReturn(HttpResponse.ok(dadosDaContaResponse()))
+
+        `when`(bcbClient.cadastrar(createPixKeyRequest()))
+            .thenReturn(HttpResponse.created(createPixKeyResponse()))
 
 
         val response = grpcClient.cadastrar(request)
@@ -68,7 +76,6 @@ internal class NovaChavePixEndpointTest(
             assertTrue(repository.existsById(UUID.fromString(pixId)))
         }
     }
-
 
     @Test
     fun `nao deve cadastrar nova chave pix quando ja existente`() {
@@ -128,6 +135,37 @@ internal class NovaChavePixEndpointTest(
         with(error) {
             assertEquals(Status.FAILED_PRECONDITION.code, status.code)
             assertEquals("Cliente não encontrado no itau", status.description)
+        }
+    }
+
+    @Test
+    fun `nao deve cadastrar chave pix quando nao conseguir registrar chave no BCB`() {
+        //cenario
+        val idTitular = "c56dfef4-7901-44fb-84e2-a2cefb157890"
+        val request = PixRequest.newBuilder()
+            .setIdTitular(idTitular)
+            .setTipo(TipoChave.EMAIL)
+            .setValorChave("teste@email.com")
+            .setConta(TipoConta.CONTA_CORRENTE)
+            .build()
+
+        `when`(itauClient.consultaContaCliente(idTitular, TipoConta.CONTA_CORRENTE.toString()))
+            .thenReturn(HttpResponse.ok(dadosDaContaResponse()))
+
+        `when`(bcbClient.cadastrar(createPixKeyRequest()))
+            .thenThrow(HttpClientResponseException("falhou", HttpResponseFactory.INSTANCE.status<Any>(HttpStatus.UNPROCESSABLE_ENTITY)))
+
+
+        //acao
+        val error = assertThrows<StatusRuntimeException> {
+            grpcClient.cadastrar(request)
+        }
+
+        //validacao
+        with(error) {
+            assertEquals(Status.FAILED_PRECONDITION.code, status.code)
+            assertEquals("Falha ao registrar a chave Pix no Banco Central do Brasil (BCB)", status.description)
+            assertTrue(repository.count() == 0L)
         }
     }
 
@@ -193,6 +231,11 @@ internal class NovaChavePixEndpointTest(
         return Mockito.mock(ItauClient::class.java)
     }
 
+    @MockBean(BancoCentralClient::class)
+    fun bcbClient(): BancoCentralClient? {
+        return Mockito.mock(BancoCentralClient::class.java)
+    }
+
     @Factory
     class Clients {
         @Bean
@@ -201,4 +244,45 @@ internal class NovaChavePixEndpointTest(
         }
     }
 
+
+    private fun createPixKeyRequest() : CreatePixKeyRequest {
+        return CreatePixKeyRequest(
+            KeyType.EMAIL,
+            "teste@email.com",
+            account(),
+            owner()
+        )
+    }
+
+    private fun createPixKeyResponse(): CreatePixKeyResponse {
+        return CreatePixKeyResponse(
+            key = "teste@email.com"
+        )
+    }
+
+    private fun owner(): Owner {
+        return Owner(
+            "Valteir",
+            "63657520325"
+        )
+    }
+
+    private fun account(): Account {
+        return Account(
+            "60701190",
+            "0001",
+            "291900",
+            AccountType.CACC
+        )
+    }
+
+    private fun dadosDaContaResponse(): ContaResponse {
+        return ContaResponse(
+            TipoConta.CONTA_CORRENTE,
+            Instituicao("60701190"),
+            "0001",
+            "291900",
+            Titular("Valteir", cpf = "63657520325")
+        )
+    }
 }
