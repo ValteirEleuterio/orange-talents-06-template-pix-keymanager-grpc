@@ -1,6 +1,7 @@
 package br.com.zupacademy.valteir.pix
 
 import br.com.zupacademy.valteir.TipoConta
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -33,6 +34,13 @@ class ChavePix(
     val instituicao: String
 ) {
 
+    @Id
+    @GeneratedValue
+    val id: UUID? = null
+
+    @Column(nullable = false)
+    val criadaEm: LocalDateTime = LocalDateTime.now()
+
     fun pertenceAo(idTitular : UUID): Boolean = idTitular == this.idTitular
 
     fun atualiza(novaChave: String) : Boolean {
@@ -44,9 +52,5 @@ class ChavePix(
     }
 
     fun ehAleatoria() = tipo == TipoChave.ALEATORIA
-
-    @Id
-    @GeneratedValue
-    val id: UUID? = null
 
 }

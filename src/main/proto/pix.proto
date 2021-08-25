@@ -4,7 +4,7 @@ option java_multiple_files = true;
 option java_package = "br.com.zupacademy.valteir";
 
 package br.com.zupacademy.valteir;
-
+import "google/protobuf/timestamp.proto";
 
 service PixService {
   rpc cadastrar(PixRequest) returns (PixResponse);
@@ -12,6 +12,14 @@ service PixService {
 
 service RemovePixService {
   rpc remove(RemoveChavePixRequest) returns (RemoveChavePixResponse);
+}
+
+service ConsultaPixService {
+  rpc consulta(ConsultaChavePixRequest) returns (ConsultaChavePixResponse);
+}
+
+service ListaPixService {
+  rpc lista(ListaChavesPixRequest) returns (ListaChavesPixResponse);
 }
 
 message ErrorDetails {
@@ -52,4 +60,59 @@ message RemoveChavePixRequest {
 message RemoveChavePixResponse {
   string pixId = 1;
   string idTitular = 2;
+}
+
+
+message ConsultaChavePixRequest {
+  message FiltroPorPixId {
+    string idTitular = 1;
+    string pixId = 2;
+  }
+
+  oneof filtro {
+    FiltroPorPixId pixId = 1;
+    string chave = 2;
+  }
+}
+
+message ConsultaChavePixResponse {
+  message ChavePix {
+
+    message Conta {
+      TipoConta tipo = 1;
+      string instituicao = 2;
+      string nomeTitular = 3;
+      string cpfTitular = 4;
+      string agencia = 5;
+      string numeroDaConta = 6;
+    }
+
+    TipoChave tipo = 1;
+    string chave = 2;
+    Conta conta = 3;
+    google.protobuf.Timestamp criadaEm = 4;
+  }
+
+  string clientId = 1;
+  string pixId = 2;
+  ChavePix chave = 3;
+}
+
+message ListaChavesPixRequest {
+  string idTitular = 1;
+}
+
+message ListaChavesPixResponse {
+
+  message ChavePix {
+    string pixId = 1;
+    string idTitular = 2;
+    TipoChave tipo = 3;
+    string chave = 4;
+    TipoConta tipoConta = 5;
+    google.protobuf.Timestamp criadaEm = 6;
+  }
+
+  repeated ChavePix chaves = 1;
+
 }

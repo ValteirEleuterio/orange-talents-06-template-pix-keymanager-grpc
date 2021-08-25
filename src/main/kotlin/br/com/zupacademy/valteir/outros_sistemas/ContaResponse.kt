@@ -10,11 +10,12 @@ data class ContaResponse(
     val titular: Titular,
 )
 
-class Instituicao(
+data class Instituicao(
+    val nome: String,
     val ispb: String,
 )
 
-class Titular(
+data class Titular(
     val nome: String,
     val cpf: String,
 )
