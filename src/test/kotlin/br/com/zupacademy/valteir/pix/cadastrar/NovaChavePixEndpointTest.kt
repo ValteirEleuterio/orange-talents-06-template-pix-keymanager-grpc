@@ -279,7 +279,7 @@ internal class NovaChavePixEndpointTest(
     private fun dadosDaContaResponse(): ContaResponse {
         return ContaResponse(
             TipoConta.CONTA_CORRENTE,
-            Instituicao("60701190"),
+            Instituicao("","60701190"),
             "0001",
             "291900",
             Titular("Valteir", cpf = "63657520325")

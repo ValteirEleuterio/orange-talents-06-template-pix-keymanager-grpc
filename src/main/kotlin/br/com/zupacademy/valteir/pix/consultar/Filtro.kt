@@ -37,10 +37,10 @@ sealed class Filtro {
             val contaRespose = try {
                 itauClient.consultaContaCliente(chave.idTitular.toString(), chave.conta.toString())
             } catch (e: HttpClientResponseException) {
-                throw ChavePixNaoEncontradaException("Chave Pix não encontrada")
+                throw IllegalStateException("Falha ao buscar dados da conta do cliente no ERP ITAU")
             }.let {
                 if(it.status == HttpStatus.NOT_FOUND)
-                    throw ChavePixNaoEncontradaException("Chave Pix não encontrada")
+                    throw IllegalStateException("Cliente nao encontrado no ERP ITAU")
 
                 it.body.get()
             }
@@ -63,10 +63,10 @@ sealed class Filtro {
                 val contaResponse = try {
                     itauClient.consultaContaCliente(possivelChavePix.get().idTitular.toString(), possivelChavePix.get().conta.toString())
                 } catch (e: HttpClientResponseException) {
-                    throw ChavePixNaoEncontradaException("Chave Pix não encontrada")
+                    throw IllegalStateException("Falha ao buscar dados da conta do cliente no ERP ITAU")
                 } .let {
                     if(it.status == HttpStatus.NOT_FOUND)
-                        throw ChavePixNaoEncontradaException("Chave Pix não encontrada")
+                        throw IllegalStateException("Cliente nao encontrado no ERP ITAU")
 
                     it.body.get()
                 }
