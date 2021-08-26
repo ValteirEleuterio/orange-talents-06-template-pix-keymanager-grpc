@@ -4,6 +4,7 @@ import br.com.zupacademy.valteir.ListaChavesPixRequest
 import br.com.zupacademy.valteir.ListaChavesPixResponse
 import br.com.zupacademy.valteir.ListaPixServiceGrpc
 import br.com.zupacademy.valteir.TipoChave
+import br.com.zupacademy.valteir.compartilhado.grpc.ErrorHandler
 import br.com.zupacademy.valteir.pix.ChavePixRepository
 import com.google.protobuf.Timestamp
 import io.grpc.stub.StreamObserver
@@ -12,10 +13,11 @@ import java.util.*
 import javax.inject.Singleton
 
 @Singleton
-class ListarChavesPixEndpoint(
+open class ListarChavesPixEndpoint(
     private val repository: ChavePixRepository,
 ) : ListaPixServiceGrpc.ListaPixServiceImplBase() {
 
+    @ErrorHandler
     override fun lista(request: ListaChavesPixRequest, responseObserver: StreamObserver<ListaChavesPixResponse>) {
         if(request.idTitular.isNullOrBlank())
             throw IllegalArgumentException("idTitular deve ser preenchido")
