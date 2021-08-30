@@ -36,7 +36,6 @@ internal class ChavePixTest {
 
     @Test
     fun `deve atualizar quando tipo ALEATORIA `() {
-        val pixId = UUID.randomUUID().toString()
         val chavePix = ChavePix(
             UUID.randomUUID(),
             TipoChave.ALEATORIA,
