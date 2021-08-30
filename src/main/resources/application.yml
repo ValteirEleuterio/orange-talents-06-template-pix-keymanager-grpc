@@ -2,15 +2,21 @@ micronaut:
   application:
     name: keymanagerGrpc
 
+grpc:
+  server:
+    port: ${SERVER_PORT:50051}
+    keep-alive-time: 1h
+    max-inbound-message-size: 1024
+
 datasources:
   default:
-    url: jdbc:postgresql://localhost:5432/keymanager
+    url: ${DB_URI:`jdbc:postgresql://localhost:5432/keymanager`}
     driverClassName: org.postgresql.Driver
-    username: keymanager
-    password: keymanager
+    username: ${DB_USER:keymanager}
+    password: ${DB_PASSWORD:keymanager}
     dialect: POSTGRES
 jpa.default.properties.hibernate.hbm2ddl.auto: update
 
-itau-api: http://localhost:9091
-bcb-api: http://localhost:8082
+itau-api: ${ITAU_URL:`http://localhost:9091`}
+bcb-api: ${BCB_URL:`http://localhost:8082`}
 
